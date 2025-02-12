@@ -1,53 +1,43 @@
-import sys
-import math
+import cgi
 import random
+import math
 
-# getting the values from the command line executed by process.php
-number = int(sys.argv[1])
-text = sys.argv[2]
+form = cgi.FieldStorage()
+number = int(form.getvalue("number"))
+text = form.getvalue("text")
 
-# 1-Number Puzzle
-# if the number is divisible by 2, its an even number, if not, it's an odd number
 if number % 2 == 0:
-    result_number = f"The number {number} is even. Its square root is {math.sqrt(number)}."
+    number_result = f"The number {number} is even. Its square root is {math.sqrt(number):.2f}."
 else:
-    result_number = f"The number {number} is odd. Its cube is {number ** 3}."
+    number_result = f"The number {number} is odd. Its cube is {number ** 3}."
 
-# 2-Text Puzzle
-#for every character in the text, it translates to Unicode, then into binary, and finally joining them in a string
 binary_text = ' '.join(format(ord(char), '08b') for char in text)
-#it adds 1 for each character that is in the string "aeiou"
-vowel_count = sum(1 for char in text if char.lower() in 'aeiou')
+vowel_count = sum(1 for char in text.lower() if char in "aeiou")
 
-
-# 3-Treasure Hunt
-#getting the random number
 secret_number = random.randint(1, 100)
-#saving the number of attempts
 attempts = 0
-max_attempts = 5
+guessed = False
+guess_log = []
 
-# creating the treasure hunt result string
-result_treasure = f'<span class="answer">The secret number is {secret_number}.</span>'
-
-while attempts < max_attempts:
+while attempts < 5:
     guess = random.randint(1, 100)
-    attempts += 1
+    guess_log.append(f"Attempt {attempts + 1}: {guess}")
     if guess == secret_number:
-        # if the guess is correct, show the attempts and the final message
-        result_treasure += f'<span class="answer">Attempt {attempts}: {guess} (Correct!)</span><span class="answer">You found the treasure in {attempts} attempts!</span>'
+        guessed = True
+        guess_log.append("Correct! You found the treasure.")
         break
-    else:
-        # if the guess is too high or low, show the attempts and gets the appropriate message
-        response_attempt = "Too high!" if guess > secret_number else "Too low!"
-            
-        result_treasure += f'<span class="answer">Attempt {attempts}: {guess} ({response_attempt})</span>'
-        
-        if attempts == max_attempts:
-            # if it's the final attempt, it shows the attempts and the final message
-            result_treasure += '<span class="answer">You did not find the treasure.</span>'
+    attempts += 1
 
-# printing results, sending it to process.php, adding some classes for asigning the css style
-print(f'<div class="asw_container"><b class="title">Number Puzzle:</b><span class="answer">{result_number}</span></div>')
-print(f'<div class="asw_container"><b class="title">Text Puzzle:</b><span class="answer">Binary: {binary_text}</span><span class="answer">Vowel Count: {vowel_count}</span></div>')
-print(f'<div class="asw_container"><b class="title">Treasure Hunt:</b>{result_treasure}</div>')
+if not guessed:
+    guess_log.append("You didn't find the treasure.")
+
+print("Content-type: text/html\n")
+print("<html><body>")
+print("<h2>Results:</h2>")
+print(f"<p>{number_result}</p>")
+print(f"<p>Binary Text: {binary_text}</p>")
+print(f"<p>Vowel Count: {vowel_count}</p>")
+print("<h3>Treasure Hunt:</h3>")
+for log in guess_log:
+    print(f"<p>{log}</p>")
+print("</body></html>")
