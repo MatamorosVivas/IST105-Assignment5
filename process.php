@@ -1,18 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Treasure Hunt Results</title>
-</head>
-<body>
-    <h2>Treasure Hunt Results</h2>
-    <?php
-    $number = $_POST["number"];
-    $text = $_POST["text"];
+<?php
 
-    $command = escapeshellcmd("python3 process.py $number $text");
-    $output = shell_exec($command);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-    echo $output;
-    ?>
-</body>
-</html>
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+   
+    $number = escapeshellarg($_POST["number"]);
+    $text = escapeshellarg($_POST["text"]);
+
+    
+    $command = "python3 process.py $number $text";
+    $output = shell_exec($command . " 2>&1"); 
+
+    
+    echo "<h2>Results:</h2>";
+    echo "<pre>$output</pre>";
+} else {
+    echo "Invalid request.";
+}
+?>
