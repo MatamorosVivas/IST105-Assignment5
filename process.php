@@ -10,13 +10,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $python_path = "C:\\Users\\Carlos\\AppData\\Local\\Programs\\Python\\Python313\\python.exe";
 
-    
+   
     $command = "\"$python_path\" process.py $number $text";
 
    
     $output = shell_exec($command . " 2>&1");
 
-
+    
     echo "<h2>Command Executed:</h2>";
     echo "<pre>$command</pre>";
 
