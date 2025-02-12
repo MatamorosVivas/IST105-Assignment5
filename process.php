@@ -1,28 +1,21 @@
 <?php
+// Get inputs from form.php by using their names attributes
+$number = $_POST['number'];
+$text = $_POST['text'];
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $number = escapeshellarg($_POST["number"]);
-    $text = escapeshellarg($_POST["text"]);
-
-    
-    $python_path = "C:\\Users\\Carlos\\AppData\\Local\\Programs\\Python\\Python313\\python.exe";
-
-   
-    $command = "\"$python_path\" process.py $number $text";
-
-   
-    $output = shell_exec($command . " 2>&1");
-
-    
-    echo "<h2>Command Executed:</h2>";
-    echo "<pre>$command</pre>";
-
-    echo "<h2>Output:</h2>";
-    echo "<pre>$output</pre>";
-} else {
-    echo "Invalid request.";
+// just checking if there are not empty, even though they have the "required" attribute in the input fields
+if (empty($number) || empty($text)) {
+    die("Please, complete all the fields");
 }
+
+// executing python script sending the arguments
+//escapeshellcmd prevents to execute the text received as a command
+$command = escapeshellcmd("python process.py $number $text");
+//executing and recieving the response from the python script
+$output = shell_exec($command);
+
+// printing the output values in the html, and adding some css style
+echo"<style>body { background-color:black; color:white;} .asw_container {display:flex; flex-direction:column; margin-bottom:10px;} .answer::before {content:'-'}</style>";
+echo "$output";
+
 ?>
