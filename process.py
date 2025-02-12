@@ -1,16 +1,22 @@
-import cgi
 import sys
 import random
 import math
 
 
+print("Received arguments:", sys.argv)
+
+
 if len(sys.argv) < 3:
-    print("Error: Missing input values.")
+    print("Error: Missing input values. Expected number and text.")
     sys.exit(1)
 
 
-number = int(sys.argv[1])
-text = sys.argv[2]
+try:
+    number = int(sys.argv[1])
+    text = sys.argv[2]
+except ValueError:
+    print("Error: Invalid number format.")
+    sys.exit(1)
 
 
 if number % 2 == 0:
@@ -21,6 +27,7 @@ else:
 
 binary_text = ' '.join(format(ord(char), '08b') for char in text)
 vowel_count = sum(1 for char in text.lower() if char in "aeiou")
+
 
 secret_number = 42  
 attempts = 0
